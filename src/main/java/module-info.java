@@ -3,6 +3,6 @@ module com.svalero.spaceexplorer {
     requires javafx.fxml;
 
 
-    opens com.svalero.spaceexplorer to javafx.fxml;
-    exports com.svalero.spaceexplorer;
+    exports com.svalero.spaceexplorer.api;
+    opens com.svalero.spaceexplorer.api to javafx.fxml;
 }
