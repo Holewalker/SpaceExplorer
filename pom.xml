@@ -69,7 +69,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.4</version>
                 <configuration>
-                    <mainClass>com.svalero.reactive.api.App</mainClass>
+                    <mainClass>com.svalero.spaceexplorer.api.App</mainClass>
                 </configuration>
             </plugin>
         </plugins>
