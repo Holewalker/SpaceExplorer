@@ -8,13 +8,13 @@ import javafx.concurrent.Task;
 import java.time.LocalDate;
 import java.util.Objects;
 
-public class SpaceDevsTask extends Task<Integer> {
+public class LaunchTask extends Task<Integer> {
 
     private LocalDate reqDate;
     Integer records;
     private Consumer<Launch> launchConsumer;
 
-    public SpaceDevsTask(Consumer<Launch> launchConsumer, Integer records, LocalDate reqDate) {
+    public LaunchTask(Consumer<Launch> launchConsumer, Integer records, LocalDate reqDate) {
         this.launchConsumer = launchConsumer;
         this.records = records;
         this.reqDate = Objects.requireNonNullElseGet(reqDate, LocalDate::now);
@@ -25,7 +25,6 @@ public class SpaceDevsTask extends Task<Integer> {
     protected Integer call() {
         SpaceDevsService spaceDevsService = new SpaceDevsService();
         spaceDevsService.getLaunchInfo(records, reqDate).subscribe(launchConsumer);
-        System.out.println("task hi");
         return null;
     }
 }

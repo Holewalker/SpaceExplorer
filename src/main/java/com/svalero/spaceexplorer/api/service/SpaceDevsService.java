@@ -40,6 +40,8 @@ public class SpaceDevsService {
     public Observable<Launch> getLaunchInfo(Integer limit, LocalDate window){
         LocalDateTime windowDT = window.atStartOfDay();
         return this.spaceDevsAPI.getLaunchInfo(limit,windowDT,windowDT.plusDays(1)).map(Launch -> Launch);
+
+        //return this.spaceDevsAPI.getLaunchInfo(limit).map(Launch -> Launch);
     }
 
 
