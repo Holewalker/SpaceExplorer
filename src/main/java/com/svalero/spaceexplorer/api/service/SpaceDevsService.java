@@ -10,6 +10,9 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class SpaceDevsService {
 
      private String SPACEDEVS_URL = "https://ll.thespacedevs.com";
@@ -34,8 +37,9 @@ public class SpaceDevsService {
 
         this.spaceDevsAPI = spaceDevsAPI.create(SpaceDevsAPI.class);
     }
-    public Observable<Launch> getLaunchInfo(Integer limit){
-        return this.spaceDevsAPI.getLaunchInfo(limit).map(Launch -> Launch);
+    public Observable<Launch> getLaunchInfo(Integer limit, LocalDate window){
+        LocalDateTime windowDT = window.atStartOfDay();
+        return this.spaceDevsAPI.getLaunchInfo(limit,windowDT,windowDT.plusDays(1)).map(Launch -> Launch);
     }
 
 
