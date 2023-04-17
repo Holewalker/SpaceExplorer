@@ -24,8 +24,8 @@ public class APODTask extends Task<Integer> {
     @Override
     protected Integer call() {
         NasaService nasaService = new NasaService();
-        nasaService.getAPOD(reqDate, apiKey).subscribe(apodConsumer);
-        System.out.println("task hi");
+        nasaService.getAPOD(reqDate, apiKey)
+                .subscribe(apodConsumer);
         return null;
     }
 }

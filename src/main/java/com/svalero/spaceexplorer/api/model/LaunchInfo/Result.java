@@ -11,7 +11,7 @@ public class Result {
     String name;
     Status status;
     String window_start; //TODO date
-    LaunchServiceProvider launchServiceProvider;
+    LaunchServiceProvider launch_service_provider;
     Rocket rocket;
     Mission mission;
     Pad pad;

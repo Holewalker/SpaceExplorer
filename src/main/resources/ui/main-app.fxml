@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
@@ -7,9 +8,19 @@
   <children>
       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="562.0" prefWidth="600.0">
           <VBox prefHeight="560.0" prefWidth="601.0">
-              <HBox prefHeight="108.0" prefWidth="601.0">
-                  <ImageView fx:id="APODview" fitHeight="298.0" fitWidth="601.0" pickOnBounds="true" preserveRatio="true" />
+              <HBox alignment="CENTER" prefHeight="108.0" prefWidth="601.0">
+                  <ImageView fx:id="APODview" fitHeight="298.0" fitWidth="424.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+                  <HBox.margin>
+                     <Insets />
+                  </HBox.margin>
+               </ImageView>
+               <ListView fx:id="listViewApod" prefHeight="298.0" prefWidth="183.0" />
               </HBox>
+            <HBox alignment="CENTER" prefHeight="120.0" prefWidth="601.0">
+               <children>
+                  <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="350.0" progress="0.0" />
+               </children>
+            </HBox>
             <HBox prefHeight="286.0" prefWidth="601.0">
                <children>
                   <TextArea fx:id="textArea1" prefHeight="200.0" prefWidth="200.0" />
