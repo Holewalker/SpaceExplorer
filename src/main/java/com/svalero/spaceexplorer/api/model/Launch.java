@@ -1,9 +1,11 @@
 package com.svalero.spaceexplorer.api.model;
 
-import com.svalero.spaceexplorer.api.model.LaunchInfo.Results;
+import com.svalero.spaceexplorer.api.model.LaunchInfo.Result;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +15,7 @@ public class Launch {
     Integer count;
     String next;
     String previous;
-    Results results;
+    List<Result> results;
 
 
 }

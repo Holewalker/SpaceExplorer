@@ -8,6 +8,5 @@ import retrofit2.http.Query;
 public interface SpaceDevsAPI {
 
     @GET("2.2.0/launch/")
-    Observable<Launch> getLaunchInfo(@Query("limit") Integer limit,
-                                     )
+    Observable<Launch> getLaunchInfo(@Query("limit") Integer limit);
 }

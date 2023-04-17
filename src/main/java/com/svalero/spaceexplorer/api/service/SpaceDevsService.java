@@ -2,6 +2,8 @@ package com.svalero.spaceexplorer.api.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.svalero.spaceexplorer.api.model.Launch;
+import io.reactivex.Observable;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -23,7 +25,7 @@ public class SpaceDevsService {
                 .create();
 
 
-        Retrofit apodAPI = new Retrofit.Builder()
+        Retrofit spaceDevsAPI = new Retrofit.Builder()
                 .baseUrl(SPACEDEVS_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(gsonParser))
@@ -32,5 +34,9 @@ public class SpaceDevsService {
 
         this.spaceDevsAPI = spaceDevsAPI.create(SpaceDevsAPI.class);
     }
+    public Observable<Launch> getLaunchInfo(Integer limit){
+        return this.spaceDevsAPI.getLaunchInfo(limit).map(Launch -> Launch);
+    }
+
 
 }
