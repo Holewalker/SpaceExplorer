@@ -1,22 +1,38 @@
-package com.svalero.spaceexplorer.api.util;
+package com.svalero.spaceexplorer.api.task;
 
 import com.svalero.spaceexplorer.api.model.LaunchInfo.Result;
+import javafx.concurrent.Task;
 
 import java.io.*;
 import java.util.List;
 
-public class ResultsToCsv {
+public class ExportTask extends Task<Integer> {
+    private List<Result> resultList;
+    private File file;
     private static final String CSV_SEPARATOR = ";";
+    Integer currentIter = 0;
 
-    public static void writeToCSV(List<Result> resultList, File outputfile) {
+
+    public ExportTask(List<Result> resultList, File file) {
+        this.resultList = resultList;
+        this.file = file;
+    }
+
+    @Override
+    protected Integer call() throws Exception {
+        double exportProgress = 0.0;
+
         try {
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputfile), "UTF-8"));
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
             StringBuilder oneLine = new StringBuilder();
             oneLine.append("Name" + CSV_SEPARATOR + "Launch service provider" + CSV_SEPARATOR + "Mission start" + CSV_SEPARATOR + "Rocket name" +
                     CSV_SEPARATOR + "Mission name" + CSV_SEPARATOR + "Pad name" + CSV_SEPARATOR + "Status");
             bw.write(oneLine.toString());
             bw.newLine();
             for (Result result : resultList) {
+                currentIter++;
+                exportProgress = ((double) currentIter / resultList.size());
+                updateProgress(exportProgress, 1);
                 oneLine.delete(0, oneLine.length());
                 oneLine.append(result.getName());
                 oneLine.append(CSV_SEPARATOR);
@@ -34,10 +50,16 @@ public class ResultsToCsv {
                 oneLine.append(CSV_SEPARATOR);
                 bw.write(oneLine.toString());
                 bw.newLine();
+                Thread.sleep(10);
             }
+            updateProgress(1, 1);
+            updateMessage("Done!");
             bw.flush();
             bw.close();
         } catch (IOException ignored) {
         }
+
+
+        return null;
     }
 }

@@ -4,6 +4,7 @@ import com.svalero.spaceexplorer.api.model.APOD;
 import com.svalero.spaceexplorer.api.model.Launch;
 import com.svalero.spaceexplorer.api.model.LaunchInfo.Result;
 import com.svalero.spaceexplorer.api.task.APODTask;
+import com.svalero.spaceexplorer.api.task.ExportTask;
 import com.svalero.spaceexplorer.api.task.LaunchTask;
 import io.reactivex.functions.Consumer;
 import javafx.beans.value.ChangeListener;
@@ -39,7 +40,6 @@ import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 import static com.svalero.spaceexplorer.api.util.PrettyLaunchResult.prettyfyResult;
-import static com.svalero.spaceexplorer.api.util.ResultsToCsv.writeToCSV;
 
 public class AppController implements Initializable {
     @FXML
@@ -63,6 +63,7 @@ public class AppController implements Initializable {
     private String API_KEY = loadApiKey();
     public APODTask apodTask;
     public LaunchTask launchTask;
+    public ExportTask exportTask;
     Integer records;
     LocalDate date;
     ObservableList<Result> resultsNameList = FXCollections.observableArrayList();
@@ -71,7 +72,6 @@ public class AppController implements Initializable {
 
     @FXML
     public void updateAPOD(ActionEvent actionEvent) throws InterruptedException {
-        progressBar.progressProperty().unbind();
         date = LocalDate.now();
         if (DPapod.getValue() != null) {
             date = DPapod.getValue();
@@ -91,7 +91,6 @@ public class AppController implements Initializable {
         };
 
         this.apodTask = new APODTask(apodConsumer, API_KEY, date);
-        progressBar.progressProperty().bind(apodTask.progressProperty());
         new Thread(apodTask).start();
         Thread.sleep(500);
     }
@@ -117,17 +116,22 @@ public class AppController implements Initializable {
     }
 
     public void getCsv(ActionEvent actionEvent) {
+        progressBar.progressProperty().unbind();
+
         FileChooser fileChooser = new FileChooser();
 
         // Set extension filter for image files
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv","*.csv");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv", "*.csv");
         fileChooser.getExtensionFilters().add(extFilter);
 
         // Show save file dialog
         File file = fileChooser.showSaveDialog(listViewLaunch.getScene().getWindow());
 
         if (file != null) {
-            writeToCSV(resultsNameList, file);
+            //  writeToCSV(resultsNameList, file);
+            exportTask = new ExportTask(resultsNameList, file);
+            progressBar.progressProperty().bind(exportTask.progressProperty());
+            new Thread(exportTask).start();
         }
     }
 
