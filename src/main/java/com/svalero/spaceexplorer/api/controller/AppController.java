@@ -83,6 +83,7 @@ public class AppController implements Initializable {
             apodList.add(String.valueOf(apod.getDate()));
             listViewApod.setFixedCellSize(40);
             listViewApod.setItems(apodList);
+            listViewApod.refresh();
             Image image = new Image(apod.getUrl());
             APODview.setImage(image);
             ContextMenu contextMenu = new ContextMenu();
