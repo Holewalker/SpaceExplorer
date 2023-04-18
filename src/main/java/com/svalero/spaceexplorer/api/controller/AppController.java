@@ -20,7 +20,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -30,12 +34,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 import static com.svalero.spaceexplorer.api.util.PrettyLaunchResult.prettyfyResult;
+import static com.svalero.spaceexplorer.api.util.ResultsToCsv.writeToCSV;
 
 public class AppController implements Initializable {
     @FXML
@@ -47,11 +51,9 @@ public class AppController implements Initializable {
     @FXML
     public DatePicker DPapod;
     @FXML
-    public TextArea textArea1;
+    public TextArea textAreaLaunch;
     @FXML
-    public TextArea textArea2;
-    @FXML
-    public ListView listView1;
+    public ListView listViewLaunch;
     @FXML
     public ListView listViewApod;
     @FXML
@@ -63,10 +65,8 @@ public class AppController implements Initializable {
     public LaunchTask launchTask;
     Integer records;
     LocalDate date;
-    ObservableList<String> resultsNameList = FXCollections.observableArrayList();
-    ObservableList<String> resultsNameListFallBack = FXCollections.observableArrayList();
-
-    List<Result> resultList;
+    ObservableList<Result> resultsNameList = FXCollections.observableArrayList();
+    ObservableList<Result> resultsNameListFallBack = FXCollections.observableArrayList();
 
 
     @FXML
@@ -96,27 +96,18 @@ public class AppController implements Initializable {
         Thread.sleep(500);
     }
 
-    public void getConcurrent(ActionEvent actionEvent) throws InterruptedException {
-        getLaunch(actionEvent);
-        updateAPOD(actionEvent);
-    }
-
     public void getLaunch(ActionEvent actionEvent) throws InterruptedException {
-        date = LocalDate.now();
+
         if (DPapod.getValue() != null) {
             date = DPapod.getValue();
         }
-        records = 10;
+        records = 25;
         //todo ver modificaciones
         Consumer<Launch> launchConsumer = (launches) -> {
-            resultList = launches.getResults();
-            for (Result result : launches.getResults()) {
-                resultsNameList.add(result.getName() + result.getLaunch_service_provider().getName());
-            }
+            resultsNameList.addAll(launches.getResults());
             resultsNameListFallBack.setAll(resultsNameList);
-            System.out.println(resultsNameList);
-            listView1.setFixedCellSize(40);
-            listView1.setItems(resultsNameList);
+            listViewLaunch.setFixedCellSize(40);
+            listViewLaunch.setItems(resultsNameList);
         };
 
         this.launchTask = new LaunchTask(launchConsumer, records, date);
@@ -125,24 +116,30 @@ public class AppController implements Initializable {
 
     }
 
-    public String loadApiKey() {
-        Properties props = new Properties();
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
-            if (inputStream != null) {
-                props.load(inputStream);
-            } else {
-                throw new FileNotFoundException("Archivo no encontrado");
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Error de lectura", e);
+    public void getCsv(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+
+        // Set extension filter for image files
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("CSV files (*.csv","*.csv");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        // Show save file dialog
+        File file = fileChooser.showSaveDialog(listViewLaunch.getScene().getWindow());
+
+        if (file != null) {
+            writeToCSV(resultsNameList, file);
         }
-        String apiKey = props.getProperty("API_KEY");
-        if (apiKey == null || apiKey.trim().isEmpty()) {
-            throw new RuntimeException("No existe API_KEY");
-        }
-        return apiKey;
     }
 
+    public void getZip(ActionEvent actionEvent) {
+
+        //todo
+    }
+
+    public void getConcurrent(ActionEvent actionEvent) throws InterruptedException {
+        getLaunch(actionEvent);
+        updateAPOD(actionEvent);
+    }
 
     public void initialize(URL location, ResourceBundle resources) {
         ContextMenu contextMenu = new ContextMenu();
@@ -182,22 +179,67 @@ public class AppController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 if (t1.length() != 0) {
-                    Predicate<String> nameFilter = result -> result.contains(t1);
+                    Predicate<Result> nameFilter = result -> result.getLaunch_service_provider().getName().contains(t1);
                     resultsNameList = resultsNameListFallBack;
                     resultsNameList = resultsNameList.filtered(nameFilter);
                 } else {
                     resultsNameList = resultsNameListFallBack;
                 }
-                listView1.setItems(resultsNameList);
-                listView1.refresh();
+                listViewLaunch.setItems(resultsNameList);
+                listViewLaunch.refresh();
             }
         });
-        listView1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+        listViewLaunch.setCellFactory(new Callback<ListView<Result>, ListCell<Result>>() {
+            @Override
+            public ListCell<Result> call(ListView<Result> listView) {
+                return new ListCell<>() {
+                    protected void updateItem(Result result, boolean empty) {
+                        super.updateItem(result, empty);
+                        if (result != null && !empty) {
+
+                            Text titleText = new Text(result.getName());
+                            String hoursCell = result.getLaunch_service_provider().getName();
+                            Text subtitleText = new Text(hoursCell);
+
+                            VBox vBox = new VBox(titleText, subtitleText);
+                            HBox hbox = new HBox();
+                            hbox.getChildren().addAll(vBox);
+                            hbox.setSpacing(10);
+                            setGraphic(hbox);
+                        } else {
+                            setGraphic(null);
+                        }
+                    }
+                };
+            }
+        });
+
+        listViewLaunch.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                Result textResult = resultList.get(listView1.getSelectionModel().getSelectedIndex());
-                textArea2.setText(prettyfyResult(textResult));
+                Result result = resultsNameList.get(listViewLaunch.getSelectionModel().getSelectedIndex());
+                textAreaLaunch.setText(prettyfyResult(result));
             }
         });
     }
+
+    public String loadApiKey() {
+        Properties props = new Properties();
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            if (inputStream != null) {
+                props.load(inputStream);
+            } else {
+                throw new FileNotFoundException("Archivo no encontrado");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error de lectura", e);
+        }
+        String apiKey = props.getProperty("API_KEY");
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new RuntimeException("No existe API_KEY");
+        }
+        return apiKey;
+    }
+
 }

@@ -8,7 +8,7 @@ public class PrettyLaunchResult {
     public static String prettyfyResult(Result result) {
         String s = "";
         String nl = "\n";
-        s = "name: " + result.getName() + nl
+        s = "Name: " + result.getName() + nl
                 + "Launch provider: " + result.getLaunch_service_provider().getName() + nl
                 + "Launch date: " + result.getWindow_start() + nl
                 + "Rocket: " + result.getRocket().getConfiguration().getName() + nl

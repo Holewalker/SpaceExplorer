@@ -6,7 +6,6 @@ import io.reactivex.functions.Consumer;
 import javafx.concurrent.Task;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 public class LaunchTask extends Task<Integer> {
 
@@ -17,7 +16,7 @@ public class LaunchTask extends Task<Integer> {
     public LaunchTask(Consumer<Launch> launchConsumer, Integer records, LocalDate reqDate) {
         this.launchConsumer = launchConsumer;
         this.records = records;
-        this.reqDate = Objects.requireNonNullElseGet(reqDate, LocalDate::now);
+        this.reqDate = reqDate;
     }
 
 

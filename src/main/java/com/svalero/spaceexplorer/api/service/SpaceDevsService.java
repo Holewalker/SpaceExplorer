@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 public class SpaceDevsService {
 
-     private String SPACEDEVS_URL = "https://ll.thespacedevs.com";
+    private String SPACEDEVS_URL = "https://ll.thespacedevs.com";
     private SpaceDevsAPI spaceDevsAPI;
 
     public SpaceDevsService() {
@@ -37,9 +37,16 @@ public class SpaceDevsService {
 
         this.spaceDevsAPI = spaceDevsAPI.create(SpaceDevsAPI.class);
     }
-    public Observable<Launch> getLaunchInfo(Integer limit, LocalDate window){
-        LocalDateTime windowDT = window.atStartOfDay();
-        return this.spaceDevsAPI.getLaunchInfo(limit,windowDT,windowDT.plusDays(1)).map(Launch -> Launch);
+
+    public Observable<Launch> getLaunchInfo(Integer limit, LocalDate window) {
+        LocalDateTime windowDTS = null;
+        LocalDateTime windowDTE= null;
+        System.out.println(window);
+        if (window != null) {
+            windowDTS = window.atStartOfDay();
+            windowDTE = window.plusDays(1).atStartOfDay();
+        }
+        return this.spaceDevsAPI.getLaunchInfo(limit, windowDTS, windowDTE).map(Launch -> Launch);
 
         //return this.spaceDevsAPI.getLaunchInfo(limit).map(Launch -> Launch);
     }
