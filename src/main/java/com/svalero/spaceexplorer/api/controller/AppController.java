@@ -6,16 +6,20 @@ import com.svalero.spaceexplorer.api.model.LaunchInfo.Result;
 import com.svalero.spaceexplorer.api.task.APODTask;
 import com.svalero.spaceexplorer.api.task.LaunchTask;
 import io.reactivex.functions.Consumer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 
 import javax.imageio.ImageIO;
@@ -26,8 +30,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
+
+import static com.svalero.spaceexplorer.api.util.PrettyLaunchResult.prettyfyResult;
 
 public class AppController implements Initializable {
     @FXML
@@ -48,11 +56,17 @@ public class AppController implements Initializable {
     public ListView listViewApod;
     @FXML
     public ProgressBar progressBar;
+    @FXML
+    public TextField textFieldFilter;
     private String API_KEY = loadApiKey();
     public APODTask apodTask;
     public LaunchTask launchTask;
     Integer records;
     LocalDate date;
+    ObservableList<String> resultsNameList = FXCollections.observableArrayList();
+    ObservableList<String> resultsNameListFallBack = FXCollections.observableArrayList();
+
+    List<Result> resultList;
 
 
     @FXML
@@ -82,6 +96,11 @@ public class AppController implements Initializable {
         Thread.sleep(500);
     }
 
+    public void getConcurrent(ActionEvent actionEvent) throws InterruptedException {
+        getLaunch(actionEvent);
+        updateAPOD(actionEvent);
+    }
+
     public void getLaunch(ActionEvent actionEvent) throws InterruptedException {
         date = LocalDate.now();
         if (DPapod.getValue() != null) {
@@ -90,13 +109,14 @@ public class AppController implements Initializable {
         records = 10;
         //todo ver modificaciones
         Consumer<Launch> launchConsumer = (launches) -> {
-            ObservableList<String> resultsName = FXCollections.observableArrayList();
+            resultList = launches.getResults();
             for (Result result : launches.getResults()) {
-                resultsName.add(result.getName() + result.getLaunch_service_provider().getName());
+                resultsNameList.add(result.getName() + result.getLaunch_service_provider().getName());
             }
-            System.out.println(resultsName);
+            resultsNameListFallBack.setAll(resultsNameList);
+            System.out.println(resultsNameList);
             listView1.setFixedCellSize(40);
-            listView1.setItems(resultsName);
+            listView1.setItems(resultsNameList);
         };
 
         this.launchTask = new LaunchTask(launchConsumer, records, date);
@@ -155,6 +175,28 @@ public class AppController implements Initializable {
                     // Handle the exception
                     ex.printStackTrace();
                 }
+            }
+        });
+
+        textFieldFilter.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                if (t1.length() != 0) {
+                    Predicate<String> nameFilter = result -> result.contains(t1);
+                    resultsNameList = resultsNameListFallBack;
+                    resultsNameList = resultsNameList.filtered(nameFilter);
+                } else {
+                    resultsNameList = resultsNameListFallBack;
+                }
+                listView1.setItems(resultsNameList);
+                listView1.refresh();
+            }
+        });
+        listView1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Result textResult = resultList.get(listView1.getSelectionModel().getSelectedIndex());
+                textArea2.setText(prettyfyResult(textResult));
             }
         });
     }

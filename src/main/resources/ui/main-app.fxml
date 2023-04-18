@@ -4,34 +4,46 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="560.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="592.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="562.0" prefWidth="600.0">
-          <VBox prefHeight="560.0" prefWidth="601.0">
-              <HBox alignment="CENTER" prefHeight="108.0" prefWidth="601.0">
-                  <ImageView fx:id="APODview" fitHeight="298.0" fitWidth="424.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
+      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="582.0" prefWidth="600.0">
+          <VBox prefHeight="582.0" prefWidth="600.0">
+              <HBox alignment="CENTER" prefHeight="376.0" prefWidth="600.0">
+                  <ImageView fx:id="APODview" fitHeight="298.0" fitWidth="300.0" pickOnBounds="true" preserveRatio="true" HBox.hgrow="NEVER">
                   <HBox.margin>
                      <Insets />
                   </HBox.margin>
                </ImageView>
-               <ListView fx:id="listViewApod" prefHeight="298.0" prefWidth="183.0" />
+               <ListView fx:id="listViewApod" prefHeight="298.0" prefWidth="300.0" />
               </HBox>
-            <HBox alignment="CENTER" prefHeight="120.0" prefWidth="601.0">
+            <HBox alignment="CENTER" prefHeight="120.0" prefWidth="600.0">
                <children>
                   <ProgressBar fx:id="progressBar" prefHeight="18.0" prefWidth="350.0" progress="0.0" />
                </children>
             </HBox>
-            <HBox prefHeight="286.0" prefWidth="601.0">
+            <HBox prefHeight="272.0" prefWidth="600.0">
                <children>
-                  <TextArea fx:id="textArea1" prefHeight="200.0" prefWidth="200.0" />
-                  <ListView fx:id="listView1" prefHeight="200.0" prefWidth="200.0" />
-                  <TextArea fx:id="textArea2" prefHeight="200.0" prefWidth="200.0" />
+                  <ListView fx:id="listView1" prefHeight="180.0" prefWidth="300.0" />
+                  <TextArea fx:id="textArea2" editable="false" prefWidth="300.0" />
                </children></HBox>
-            <HBox alignment="CENTER" prefHeight="60.0" prefWidth="434.0">
+            <HBox alignment="CENTER" prefHeight="129.0" prefWidth="600.0">
+               <children>
+                  <Label prefHeight="17.0" prefWidth="119.0" text="Filtrar resultados:" />
+                  <TextField fx:id="textFieldFilter" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="83.0" prefWidth="600.0">
                <children>
                   <DatePicker fx:id="DPapod" prefHeight="25.0" prefWidth="171.0" />
-                    <Button fx:id="btAPOD" mnemonicParsing="false" onAction="#updateAPOD" prefHeight="25.0" prefWidth="198.0" text="Get astronomy picture of the day" />
+                    <Button fx:id="btAPOD" mnemonicParsing="false" onAction="#updateAPOD" prefHeight="51.0" prefWidth="198.0" text="Get astronomy picture of the day" />
                    <Button fx:id="btLaunch" mnemonicParsing="false" onAction="#getLaunch" prefHeight="25.0" prefWidth="175.0" text="Get Launch events" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="83.0" prefWidth="600.0">
+               <children>
+                  <Button fx:id="btZip" mnemonicParsing="false" onAction="#updateAPOD" prefHeight="51.0" prefWidth="198.0" text="Create Launch Zip" />
+                  <Button fx:id="btnCsv" mnemonicParsing="false" onAction="#getLaunch" prefHeight="25.0" prefWidth="175.0" text="Create Launch CSV" />
+                  <Button fx:id="btRequests" mnemonicParsing="false" onAction="#getConcurrent" prefHeight="25.0" prefWidth="99.0" text="REQ both" />
                </children>
             </HBox>
           </VBox>
