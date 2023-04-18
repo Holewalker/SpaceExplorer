@@ -28,7 +28,7 @@
                </children></HBox>
             <HBox alignment="CENTER" prefHeight="129.0" prefWidth="600.0">
                <children>
-                  <Label prefHeight="17.0" prefWidth="166.0" text="Filtrar resultados por agencia:" />
+                  <Label prefHeight="17.0" prefWidth="166.0" text="Filter by agency:" />
                   <TextField fx:id="textFieldFilter" />
                </children>
             </HBox>
